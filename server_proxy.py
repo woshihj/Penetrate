@@ -21,11 +21,17 @@ class ConnectionListManager:
 
     def get(self, host, port, timeout=15):
         while timeout >= 0:
-            for sock in list(self.__list):
-                address = sock.getpeername()
-                if host == address[0] and port == address[1]:
-                    with self.__lock:
-                        self.__list.remove(sock)
+            # TODO: Add handshake protocol to verify each connections.
+            # for sock in list(self.__list):
+            #     address = sock.getpeername()
+            #     if host == address[0] and port == address[1]:
+            #         with self.__lock:
+            #             self.__list.remove(sock)
+            #         return sock
+            if len(list(self.__list)) > 0:
+                with self.__lock():
+                    sock = self.__list[0]
+                    self.__list.remove(sock)
                     return sock
             sleep(0.5)
             timeout -= 0.5
@@ -209,13 +215,14 @@ class ServerProxy(Module):
                                           (conn1.getpeername()[1], conn1.getsockname()[1],
                                            conn2.getsockname()[1], conn2.getpeername()[1],
                                            conn1.fileno(), conn2.fileno()))
+                                log.info('Local(%s), Remote(%s)' % (conn2.getsockname(), conn2.getpeername()))
                             else:
                                 log.error('Failed to establish connection pair on port(%d)' % port)
                     elif event & ~select.EPOLLIN:
                         if self.__remove_connection_pair(fd):
                             log.debug('Connection(fd=%d) closed, and connection pair removed.' % fd)
                         else:
-                            log.warning('Connection(fd=%d) closed, but connection pair not removed.' % fd)
+                            log.error('Connection(fd=%d) closed, but connection pair not removed.' % fd)
                     else:
                         sock_src = self.__fd_to_socket[fd]
                         sock_dst = self.__fd_to_socket[self.__fd_to_fd[fd]]
@@ -248,7 +255,7 @@ class ServerProxy(Module):
                 for fd, event in events:
                     if event & ~select.EPOLLIN:
                         sock.close()
-                        raise Exception('')
+                        raise Exception('Connection closed unexpectedly.')
                     else:
                         conn, address = sock.accept()
                         self.__manager.put(conn)

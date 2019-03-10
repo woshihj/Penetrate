@@ -136,7 +136,7 @@ class Protocol(Module):
                     continue
                 for fd, event in events:
                     if event & ~select.EPOLLIN:
-                        raise Exception('Connection closed unexpectedly')
+                        raise Exception('Connection closed unexpectedly.')
                     else:
                         _req = self.__sock_cmd.recv(Protocol.SOCKET_BUFFER_SIZE)
                         if _req:

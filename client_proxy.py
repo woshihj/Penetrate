@@ -114,6 +114,7 @@ class ClientProxy(Module):
                       (conn2.getpeername()[1], conn2.getsockname()[1],
                        conn1.getsockname()[1], conn1.getpeername()[1],
                        conn2.fileno(), conn1.fileno()))
+            log.info('Local(%s), Remote(%s)' % (conn2.getsockname(), conn2.getpeername()))
             return '%s:%d' % conn2.getsockname()
         else:
             return Protocol.Response.INVALID
