@@ -10,12 +10,10 @@ class Module(metaclass=ABCMeta):
         RUNNING = 2
         STOPPED = 3
 
-    module_name = 'unnamed_module'
-    status = Status.DEFAULT
-
     @abstractclassmethod
-    def __init__(self, module_name):
+    def __init__(self, module_name='UNNAMED_MODULE'):
         self.module_name = module_name.upper()
+        self.status = Module.Status.DEFAULT
 
     @abstractclassmethod
     def start(self):
@@ -23,7 +21,7 @@ class Module(metaclass=ABCMeta):
 
     @abstractclassmethod
     def stop(self):
-        log.info('Module<%s> stopped.' % self.module_name)
+        log.warning('Module<%s> stopped.' % self.module_name)
 
     def set_status(self, status):
         self.status = status
