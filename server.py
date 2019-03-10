@@ -41,7 +41,9 @@ if __name__ == '__main__':
     _host = Server.Config.SERVER_HOST
     _port = Server.Config.SERVER_PORT
     _map = Server.Config.PORT_MAPPING_TABLE
-    if len(sys.argv) == 2:
+    if len(sys.argv) == 1:
+        log.warning('Running with default settings: bind=%s:%d, map=%s' % (_host, _port, _map))
+    elif len(sys.argv) == 2:
         _map = eval(sys.argv[1])
     elif len(sys.argv) == 4:
         _host = sys.argv[1]

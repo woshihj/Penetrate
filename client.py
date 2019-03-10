@@ -38,7 +38,9 @@ class Client:
 if __name__ == '__main__':
     _host = Client.Config.SERVER_HOST
     _port = Client.Config.SERVER_PORT
-    if len(sys.argv) == 2:
+    if len(sys.argv) == 1:
+        log.warning('Running with default settings: server=%s:%d' % (_host, _port))
+    elif len(sys.argv) == 2:
         _host = sys.argv[1]
     elif len(sys.argv) == 3:
         _host = sys.argv[1]
